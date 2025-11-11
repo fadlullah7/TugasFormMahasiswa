@@ -63,7 +63,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        btnSubmit.setText("Tambah");
+        btnSubmit.setText("insert");
         btnSubmit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSubmitActionPerformed(evt);
