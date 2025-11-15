@@ -1,5 +1,6 @@
 package database.pbo;
 
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 
@@ -71,4 +72,29 @@ public class MahasiswaDAO {
         }
         return list;
     }
+      public void uploadCSV(File file) throws Exception {
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        Connection con = DbConnection.connect();
+        String line;
+        br.readLine();
+
+        String sql = "INSERT INTO mahasiswa (nama, nim) VALUES (?, ?)";
+        PreparedStatement pst = con.prepareStatement(sql);
+
+        while ((line = br.readLine()) != null) {
+            String[] data = line.split(",");
+            if (data.length >= 2) {
+                pst.setString(1, data[0].trim());
+                pst.setString(2, data[1].trim());
+                pst.addBatch();
+            }
+        }
+
+        pst.executeBatch();
+        pst.close();
+        con.close();
+    } catch (Exception e) {
+        throw new Exception("Gagal upload CSV: " + e.getMessage());
+    }
+}
 }
