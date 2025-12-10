@@ -3,16 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package database.pbo;
-import database.pbo.DbConnection;
+import dao.MahasiswaDAO;
+import model.Mahasiswa;
+import db.DbConnection;
 import java.io.File;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.*;
 import javax.swing.*;
+import model.JenisMahasiswa;
+import service.BiayaService;
 
 /**
  *
- * @author Ahmad Yusuf
+ * @author zami
  */
 public class MainFrame extends javax.swing.JFrame {
     
@@ -24,13 +28,37 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
          initComponents();
        dao = new MahasiswaDAO(DbConnection.connect());
-       modelMahasiswa = new DefaultTableModel(
-       new String[]{"ID", "Nama", "NIM"}, 0);
+       loadComboJenis();
+        String[] header = {"ID", "Nama", "NIM", "SKS", "Jenis", "Biaya"};
+        modelMahasiswa = new DefaultTableModel(header, 0);
         tblMahasiswa.setModel(modelMahasiswa);
         loadData();
         
      
     }
+    private void loadComboJenis() {
+    try {
+        Connection conn = DbConnection.connect();
+       
+
+        cmbJenis.removeAllItems();
+for (JenisMahasiswa jm :dao.getAllJenis()) {
+    cmbJenis.addItem(jm);
+}
+
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+    private void clearForm() {
+    txtNama.setText("");
+    txtNim.setText("");
+    txtSKS.setText("");
+    cmbJenis.setSelectedIndex(0);
+}
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -52,6 +80,10 @@ public class MainFrame extends javax.swing.JFrame {
         btnHapus = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnUpload = new javax.swing.JButton();
+        lblNim1 = new javax.swing.JLabel();
+        cmbJenis = new javax.swing.JComboBox();
+        lblNim2 = new javax.swing.JLabel();
+        txtSKS = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
@@ -120,23 +152,26 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        lblNim1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblNim1.setForeground(new java.awt.Color(255, 255, 255));
+        lblNim1.setText("SKS");
+
+        cmbJenis.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        lblNim2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblNim2.setForeground(new java.awt.Color(255, 255, 255));
+        lblNim2.setText("Jenis Mahasiswa");
+
+        txtSKS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSKSActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(71, 71, 71)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblNama, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(lblNim, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNama)
-                            .addComponent(txtNim))
-                        .addGap(94, 94, 94))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(68, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -150,6 +185,29 @@ public class MainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(94, 94, 94))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(71, 71, 71)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblNama, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblNim, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblNim1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblNim2, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtNama)
+                                    .addComponent(txtNim))
+                                .addGap(94, 94, 94))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cmbJenis, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtSKS, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -162,15 +220,24 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtNim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblNim))
-                .addGap(71, 71, 71)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEdit)
-                    .addComponent(btnHapus)
-                    .addComponent(btnSubmit)
-                    .addComponent(btnUpload))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(87, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblNim1)
+                    .addComponent(txtSKS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lblNim2)
+                        .addGap(104, 104, 104)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnEdit)
+                            .addComponent(btnHapus)
+                            .addComponent(btnSubmit)
+                            .addComponent(btnUpload))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbJenis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -188,13 +255,26 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-        // TODO add your handling code here:
-        
-         String nama = txtNama.getText();
-        String nim = txtNim.getText();
-         dao.insert(new Mahasiswa(nama, nim));
-        JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
-        loadData();
+        String nama = txtNama.getText();
+String nim = txtNim.getText();
+int sks = Integer.parseInt(txtSKS.getText());
+
+JenisMahasiswa selected = (JenisMahasiswa) cmbJenis.getSelectedItem();
+int jenisId = selected.getId();
+String jenisNama = selected.getNamaJenis();
+
+BiayaService biayaService = new BiayaService();
+int biaya = biayaService.hitungBiaya(jenisNama, sks);
+
+Mahasiswa mhs = new Mahasiswa(nama, nim, sks, jenisId, biaya);
+dao.insert(mhs);
+
+JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
+loadData();
+clearForm();
+
+
+
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
@@ -211,28 +291,54 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
-      int row = tblMahasiswa.getSelectedRow();
-        if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Pilih data dulu!");
-            return;
-        }
+    int row = tblMahasiswa.getSelectedRow();
+if (row == -1) {
+    JOptionPane.showMessageDialog(this, "Pilih data dulu!");
+    return;
+}
 
-        int id = (int) modelMahasiswa.getValueAt(row, 0);
-        String nama = txtNama.getText();
-        String nim = txtNim.getText();
+try {
+    int id = Integer.parseInt(modelMahasiswa.getValueAt(row, 0).toString());
+    String nama = txtNama.getText();
+    String nim  = txtNim.getText();
+   int sks = Integer.parseInt(txtSKS.getText().trim());
 
-        dao.update(new Mahasiswa(id, nama, nim));
-        JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!");
-        loadData();
+    JenisMahasiswa selectedJenis = (JenisMahasiswa) cmbJenis.getSelectedItem();
+    int jenisId = selectedJenis.getId();
+    String jenisNama = selectedJenis.getNamaJenis();
+
+    int biaya = new BiayaService().hitungBiaya(jenisNama, sks);
+
+    Mahasiswa mhs = new Mahasiswa(id, nama, nim, sks, jenisId, biaya);
+    dao.update(mhs);
+
+    JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!");
+
+    loadData();
+    clearForm();
+
+} catch (NumberFormatException e) {
+    JOptionPane.showMessageDialog(this, "SKS harus berupa angka!");
+}
+
+
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void tblMahasiswaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMahasiswaMouseClicked
-       int row = tblMahasiswa.getSelectedRow();
-        if (row != -1) {
-            txtNama.setText(modelMahasiswa.getValueAt(row, 1).toString());
-            txtNim.setText(modelMahasiswa.getValueAt(row, 2).toString());
+     int row = tblMahasiswa.getSelectedRow();
+    if (row != -1) {
+        txtNama.setText(modelMahasiswa.getValueAt(row, 1).toString());
+        txtNim.setText(modelMahasiswa.getValueAt(row, 2).toString());
+        txtSKS.setText(modelMahasiswa.getValueAt(row, 3).toString());
+        String jenisNama = modelMahasiswa.getValueAt(row, 4).toString();
+        for (int i = 0; i < cmbJenis.getItemCount(); i++) {
+            JenisMahasiswa item = (JenisMahasiswa) cmbJenis.getItemAt(i);
+            if (item.getNamaJenis().equals(jenisNama)) {
+                cmbJenis.setSelectedIndex(i);
+                break;
+            }
         }
+    }
     }//GEN-LAST:event_tblMahasiswaMouseClicked
 
     private void txtNamaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNamaActionPerformed
@@ -261,18 +367,23 @@ public class MainFrame extends javax.swing.JFrame {
     }
     }//GEN-LAST:event_btnUploadActionPerformed
 
-    private void insert(){
-        
+    private void txtSKSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSKSActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSKSActionPerformed
+
+    
+  private void loadData() {
+    modelMahasiswa.setRowCount(0);
+
+    for (Object[] row : dao.getAllMahasiswa()) {
+        modelMahasiswa.addRow(row);
     }
-    private void loadData(){
-        modelMahasiswa.setRowCount(0);
-        List<Mahasiswa> data = dao.getAll();
-        for (Mahasiswa m : data) {
-            modelMahasiswa.addRow(new Object[]{m.getId(), m.getNama(), m.getNim()});
-        }
-        //select * from mahasiswa
-        
-    }
+    tblMahasiswa.getColumnModel().getColumn(0).setMinWidth(0);
+    tblMahasiswa.getColumnModel().getColumn(0).setMaxWidth(0);
+    tblMahasiswa.getColumnModel().getColumn(0).setWidth(0);
+}
+
+
     /**
      * @param args the command line arguments
      */
@@ -313,12 +424,16 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnSubmit;
     private javax.swing.JButton btnUpload;
+    private javax.swing.JComboBox cmbJenis;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblNama;
     private javax.swing.JLabel lblNim;
+    private javax.swing.JLabel lblNim1;
+    private javax.swing.JLabel lblNim2;
     private javax.swing.JTable tblMahasiswa;
     private javax.swing.JTextField txtNama;
     private javax.swing.JTextField txtNim;
+    private javax.swing.JTextField txtSKS;
     // End of variables declaration//GEN-END:variables
 }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package database.pbo;
+package model;
 
 import java.sql.Connection;
 
@@ -10,46 +10,61 @@ import java.sql.Connection;
  *
  * @author Ahmad Yusuf
  */
+
 public class Mahasiswa {
+
     private int id;
     private String nama;
     private String nim;
+    private int sks;
+    private int jenisId;
+    private int biaya;
 
-    public Mahasiswa(int id, String nama, String nim) {
+
+    public Mahasiswa(String nama, String nim, int sks, int jenisId, int biaya) {
+        this.nama = nama;
+        this.nim = nim;
+        this.sks = sks;
+        this.jenisId = jenisId;
+        this.biaya = biaya;
+    }
+
+
+    public Mahasiswa(int id, String nama, String nim, int sks, int jenisId, int biaya) {
         this.id = id;
         this.nama = nama;
         this.nim = nim;
+        this.sks = sks;
+        this.jenisId = jenisId;
+        this.biaya = biaya;
     }
 
-    public Mahasiswa(String nama, String nim) {
-        this.nama = nama;
-        this.nim = nim;
-    }
-
+   
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getNama() {
         return nama;
     }
 
-    public void setNama(String nama) {
-        this.nama = nama;
-    }
-
     public String getNim() {
         return nim;
     }
 
-    public void setNim(String nim) {
-        this.nim = nim;
+    public int getSks() {
+        return sks;
+    }
+
+    public int getJenisId() {
+        return jenisId;
+    }
+
+    public int getBiaya() {
+        return biaya;
     }
 }
+
 
 
 
