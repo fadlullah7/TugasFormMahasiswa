@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.*;
 import javax.swing.*;
+import model.BiayaKuliah;
 import model.JenisMahasiswa;
 import service.BiayaService;
 
@@ -255,23 +256,38 @@ for (JenisMahasiswa jm :dao.getAllJenis()) {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-        String nama = txtNama.getText();
-String nim = txtNim.getText();
-int sks = Integer.parseInt(txtSKS.getText());
+        String nama = txtNama.getText().trim();
+String nim  = txtNim.getText().trim();
+int sks     = Integer.parseInt(txtSKS.getText().trim());
+
 
 JenisMahasiswa selected = (JenisMahasiswa) cmbJenis.getSelectedItem();
 int jenisId = selected.getId();
 String jenisNama = selected.getNamaJenis();
 
+
 BiayaService biayaService = new BiayaService();
-int biaya = biayaService.hitungBiaya(jenisNama, sks);
+
+
+BiayaKuliah biayaObj = biayaService.getJenis(jenisNama);
+
+
+int biaya = biayaObj.hitung(sks);
+
 
 Mahasiswa mhs = new Mahasiswa(nama, nim, sks, jenisId, biaya);
+
+
 dao.insert(mhs);
 
+
 JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
+
+
 loadData();
 clearForm();
+
+
 
 
 
@@ -298,18 +314,43 @@ if (row == -1) {
 }
 
 try {
-    int id = Integer.parseInt(modelMahasiswa.getValueAt(row, 0).toString());
-    String nama = txtNama.getText();
-    String nim  = txtNim.getText();
-   int sks = Integer.parseInt(txtSKS.getText().trim());
+    // Ambil ID dari tabel
+    String idValue = modelMahasiswa.getValueAt(row, 0).toString().trim();
+    int id = Integer.parseInt(idValue);
 
+    // Validasi input teks
+    String nama = txtNama.getText().trim();
+    String nim  = txtNim.getText().trim();
+    String sksText = txtSKS.getText().trim();
+
+    if (nama.isEmpty() || nim.isEmpty() || sksText.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
+        return;
+    }
+
+    int sks = Integer.parseInt(sksText);
+
+    
     JenisMahasiswa selectedJenis = (JenisMahasiswa) cmbJenis.getSelectedItem();
+    if (selectedJenis == null) {
+        JOptionPane.showMessageDialog(this, "Jenis mahasiswa belum dipilih!");
+        return;
+    }
+
     int jenisId = selectedJenis.getId();
     String jenisNama = selectedJenis.getNamaJenis();
 
-    int biaya = new BiayaService().hitungBiaya(jenisNama, sks);
+   
+    BiayaService biayaService = new BiayaService();
+    BiayaKuliah biayaObj = biayaService.getJenis(jenisNama);
 
+   
+    int biaya = biayaObj.hitung(sks);
+
+   
     Mahasiswa mhs = new Mahasiswa(id, nama, nim, sks, jenisId, biaya);
+
+    
     dao.update(mhs);
 
     JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!");
@@ -346,24 +387,40 @@ try {
     }//GEN-LAST:event_txtNamaActionPerformed
 
     private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
-        // TODO add your handling code here:
-      JFileChooser chooser = new JFileChooser();
+       JFileChooser chooser = new JFileChooser();
+    chooser.setDialogTitle("Pilih File CSV");
+
     int result = chooser.showOpenDialog(this);
-    
-    if (result == JFileChooser.APPROVE_OPTION) {
-        File file = chooser.getSelectedFile();
-        
-        try {
-            
-            dao.uploadCSV(file);
-            JOptionPane.showMessageDialog(this, "Data dari CSV berhasil diupload!");
-            loadData(); 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal upload: " + e.getMessage());
-            e.printStackTrace();
-        }
-    } else {
+
+    if (result != JFileChooser.APPROVE_OPTION) {
         JOptionPane.showMessageDialog(this, "Upload dibatalkan!");
+        return;
+    }
+
+    File file = chooser.getSelectedFile();
+
+    if (!file.getName().toLowerCase().endsWith(".csv")) {
+        JOptionPane.showMessageDialog(this, "File harus berekstensi .csv!");
+        return;
+    }
+
+    try {
+        dao.uploadCSV(file);
+
+        JOptionPane.showMessageDialog(this,
+                "Data dari CSV berhasil diupload!",
+                "Sukses",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        loadData();
+        
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this,
+                "Gagal upload: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+
+        e.printStackTrace();
     }
     }//GEN-LAST:event_btnUploadActionPerformed
 

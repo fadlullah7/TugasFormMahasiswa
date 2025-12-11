@@ -110,28 +110,37 @@ public class MahasiswaDAO {
          BufferedReader br = new BufferedReader(new FileReader(file));
          PreparedStatement pst = con.prepareStatement(sql)) {
 
-        con.setAutoCommit(false); 
+        con.setAutoCommit(false);
 
         String line = br.readLine(); 
+        int count = 0;
 
         while ((line = br.readLine()) != null) {
 
             String[] data = line.split(",");
 
-            if (data.length < 2) continue; 
+            if (data.length < 2) continue;
 
-            pst.setString(1, data[0].trim());  
-            pst.setString(2, data[1].trim()); 
+            String nama = data[0].trim();
+            String nim = data[1].trim();
+
+            pst.setString(1, nama);
+            pst.setString(2, nim);
             pst.addBatch();
+
+            count++;
         }
 
         pst.executeBatch();
-        con.commit(); 
+        con.commit();
+
+        System.out.println(count + " data berhasil diupload.");
 
     } catch (Exception e) {
         throw new Exception("Gagal upload CSV: " + e.getMessage());
     }
 }
+
 
      public ArrayList<JenisMahasiswa> getAllJenis() {
     ArrayList<JenisMahasiswa> list = new ArrayList<>();

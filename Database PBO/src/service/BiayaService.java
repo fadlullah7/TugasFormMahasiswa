@@ -1,27 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package service;
+
+
+import model.*;
 
 public class BiayaService {
 
-    public int hitungBiaya(String jenis, int sks) {
-
-        if (jenis == null) return 0;
+    public BiayaKuliah getJenis(String jenis) {
 
         switch (jenis) {
             case "Reguler":
-                return sks * 150000;
+                return new Reguler();
 
             case "Beasiswa":
-                return (int) (sks * 150000 * 0.5);
+                return new Beasiswa();
 
             case "Internasional":
-                return (sks * 300000) + 5000000;
+                return new Internasional();
 
             default:
-                return 0;
+                return null;
         }
     }
 }
